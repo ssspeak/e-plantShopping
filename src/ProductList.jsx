@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addItem, updateQuantity, removeItem } from './CartSlice';
 function ProductList() {
     const [showCart, setShowCart] = useState(false); 
-    const [showPlants, setShowPlants] = useState(false); // State to control the visibility of the About Us page
     const [addedToCart, setAddedToCart] = useState({});
 
     const dispatch = useDispatch();
@@ -242,24 +241,23 @@ function ProductList() {
     e.preventDefault();
     setShowCart(true); // Set showCart to true when cart icon is clicked
 };
-const handlePlantsClick = (e) => {
-    e.preventDefault();
-    setShowPlants(true); // Set showAboutUs to true when "About Us" link is clicked
-    setShowCart(false); // Hide the cart when navigating to About Us
-};
-const handleAddItem = (item) => {
-    dispatch(addItem(item)); // Dispatch addItem action to add item to cart
-};
-    const handleAddToCart = (product) => {
-        dispatch(addItem(product));
-        setAddedToCart((prevState) => ({
+const handleAddToCart = (product) => {
+    dispatch(addItem(product));
+    setAddedToCart((prevState) => ({
         ...prevState,
-        [product.name]: true, // Set the product name as key and value as true to indicate it's added to cart
+        [product.name]: "Added to cart!"
+    }));
+    
+    setTimeout(() => {
+        setAddedToCart((prevState) => ({
+            ...prevState,
+            [product.name]: ""
         }));
-    };
-    const getTotalQuantity = () => {
-        return cartItems.reduce((total, item) => total + item.quantity, 0); // Calculate total quantity
-    };
+    }, 2000);
+};
+const getTotalQuantity = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0); // Calculate total quantity
+};
    const handleContinueShopping = (e) => {
     e.preventDefault();
     setShowCart(false);
@@ -294,8 +292,11 @@ const handleAddItem = (item) => {
                         <div className="product-card" key={plantIndex}>
                             <img className="product-image" src={plant.image} alt={plant.name} />
                             <div className="product-title">{plant.name}</div>
-                            {/*Similarly like the above plant.name show other details like description and cost*/}
-                            <button  className="product-button" onClick={() => handleAddToCart(plant)}>Add to Cart</button>
+                            <div className="product-description">{plant.description}</div>
+                            <div className="product-cost">{plant.cost}</div>
+                            <button className="product-button" onClick={() => handleAddToCart(plant)}>
+                                {addedToCart[plant.name] ? "Added!" : "Add to Cart"}
+                            </button>
                         </div>
                         ))}
                     </div>
